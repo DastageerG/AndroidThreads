@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
 //            e.printStackTrace();
 //        }
 
-
+///             This is the better way
         Runnable runnable = new Runnable()
         {
             @Override
