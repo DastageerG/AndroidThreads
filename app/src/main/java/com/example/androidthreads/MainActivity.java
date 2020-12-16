@@ -34,6 +34,18 @@ public class MainActivity extends AppCompatActivity
     {
         log("Code Running");
         progressBar.setVisibility(View.VISIBLE);
+
+        // this method block the UI Thread;
+//
+//        try
+//        {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
+
+
         Runnable runnable = new Runnable()
         {
             @Override
