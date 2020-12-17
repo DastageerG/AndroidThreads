@@ -1,21 +1,26 @@
 package com.example.androidthreads;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
 {
 
+    public static final String TAG = "1111";
     private TextView textView;
     private ScrollView scrollView;
     private ProgressBar progressBar;
-    Thread thread;
+    private Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -24,26 +29,27 @@ public class MainActivity extends AppCompatActivity
         textView = findViewById(R.id.textView);
         scrollView = findViewById(R.id.scrollView);
 
-        progressBar = findViewById(R.id.progressBar);
+        handler = new Handler(getMainLooper())
+        {
+            @Override
+            public void handleMessage(@NonNull Message msg)
+            {
+                super.handleMessage(msg);
+                Toast.makeText(MainActivity.this, "" + msg.getData().get("Message"), Toast.LENGTH_SHORT).show();
+            }
+        };
 
-        textView.setText(R.string.lorem);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+
+
+        // textView.setText(R.string.lorem);
 
     }
 
     public void runCode(View view)
     {
         log("Code Running");
-        progressBar.setVisibility(View.VISIBLE);
-
-        // this method block the UI Thread;
-//
-//        try
-//        {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
 
 ///             This is the better way
         Runnable runnable = new Runnable()
@@ -51,24 +57,45 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
-               progressBar.setVisibility(View.GONE);
+                Bundle bundle = new Bundle();
+                Message start = new Message();
+                bundle.putString("Message", "Download Started");
+                start.setData(bundle);
+                handler.sendMessage(start);
+                Log.d(TAG, "run: Started");
+                try
+                {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                Message message = new Message();
+                bundle.putString("Message", "Download Completed");
+                message.setData(bundle);
+                handler.sendMessage(message);
+                Log.d(TAG, "run: completed");
             }
         };
-        Handler handler = new Handler();
-        handler.postDelayed(runnable,3000);
 
+        Thread thread = new Thread(runnable);
+        thread.setName("Check Thread");
+        thread.start();
+
+//        Handler handler = new Handler();
+//        handler.postDelayed(runnable,3000);
 
 
     } // runCode closed
     private void log(String message)
     {
         textView.append(message+"\n");
-        scrollView.fullScroll(View.FOCUS_DOWN);
+
     }
     public void clearText(View view)
     {
         textView.setText("");
-        scrollView.fullScroll(View.FOCUS_UP);
+
     }
 
 } // mainActivity closed
