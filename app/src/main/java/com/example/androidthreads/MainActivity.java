@@ -51,36 +51,10 @@ public class MainActivity extends AppCompatActivity
     {
         log("Code Running");
 
-///             This is the better way
-        Runnable runnable = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Bundle bundle = new Bundle();
-                Message start = new Message();
-                bundle.putString("Message", "Download Started");
-                start.setData(bundle);
-                handler.sendMessage(start);
-                Log.d(TAG, "run: Started");
-                try
-                {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-                Message message = new Message();
-                bundle.putString("Message", "Download Completed");
-                message.setData(bundle);
-                handler.sendMessage(message);
-                Log.d(TAG, "run: completed");
-            }
-        };
 
-        Thread thread = new Thread(runnable);
-        thread.setName("Check Thread");
+        DownloadThread thread = new DownloadThread();
         thread.start();
+        
 
 //        Handler handler = new Handler();
 //        handler.postDelayed(runnable,3000);
