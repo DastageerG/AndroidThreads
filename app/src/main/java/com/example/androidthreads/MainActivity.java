@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
 
         DownloadThread thread = new DownloadThread();
         thread.start();
-        
+
 
 //        Handler handler = new Handler();
 //        handler.postDelayed(runnable,3000);
