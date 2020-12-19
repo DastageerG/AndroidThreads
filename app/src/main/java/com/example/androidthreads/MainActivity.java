@@ -3,6 +3,9 @@ package com.example.androidthreads;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,14 +17,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements TaskFragment.TaskHandler
 {
 
     private DownloadThread thread;
     public static final String TAG = "1111";
     private TextView textView;
     private ScrollView scrollView;
-    private ProgressBar progressBar;
+    private int count = 0;
+    private boolean isTaskRunning;
+    private TaskFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -29,8 +35,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
         scrollView = findViewById(R.id.scrollView);
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+
+        FragmentManager fm = getFragmentManager();
+        fragment = (TaskFragment) fm.findFragmentByTag("Fragment");
+
+        if (fragment == null)
+        {
+            fragment = new TaskFragment();
+            fm.beginTransaction().add(fragment, "Fragment").commit();
+        }
 
 
     } // onCreate closed
@@ -38,10 +51,9 @@ public class MainActivity extends AppCompatActivity
 
     public void runCode(View view)
     {
-        log("Code Running");
+        // log("Code Running");
 
-        new TaskCheck().execute("Hello", "Hi ", "Ola");
-
+        fragment.runTask("Manjo Maye", "Na weende", "Hala Thayi", "Ha ustad", "Chicke Rakhis");
 
     } // runCode closed
     private void log(String message)
@@ -56,30 +68,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public class TaskCheck extends AsyncTask<String, Void, Void>
+
+    @Override
+    public void handleTask(String message)
     {
-
-        @Override
-        protected Void doInBackground(String... strings)
-        {
-
-            for (String string : strings)
-            {
-                Log.d(TAG, "doInBackground: " + string);
-
-                try
-                {
-                    Thread.sleep(3000);
-                } // try closed
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                } // catch closed
-
-
-            } // for closed
-            return null;
-        }
+        log(message);
     }
 } // mainActivity closed
 
